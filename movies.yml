@@ -1,0 +1,345 @@
+openapi: 3.0.3
+info:
+  title: Movies Database
+  version: '1.0'
+paths:
+  /movies:
+    get:
+      tags:
+        - Movies
+      summary: List all movies
+      description: Returns a list of movies with title and release date
+      parameters:
+        - in: query
+          name: title
+          description: filter by title
+          required: false
+          schema: 
+            type: string
+        - in: query
+          name: genres
+          description: filter by genres
+          required: false
+          schema: 
+            type: array
+            items: 
+              type: string
+      responses:
+        '200':
+          description: List of movies with title and release date
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                 properties:
+                  title:
+                    type: string
+                    example: The Matrix
+                  release-date:
+                    type: string
+                    format: date-time
+                    example: 1999-03-24
+        '400':
+          description: Invalid query parameters
+    post:
+      tags:
+        - Movies
+      summary: Create a new movie
+      requestBody:
+        description: Created movie object
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+      responses:
+        '201':
+          description: Movie created successfully
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Movie'
+        '400': 
+          description: Invalid input
+        '422':
+          description: Validation exception
+          
+  /movies/{movieId}:
+    get:
+      tags:
+        - Movies
+      summary: Get movie details
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Movie details
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - Movies
+      summary: Update the movie object
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses: 
+        default: 
+          description: Successful operation
+    delete: 
+      tags:
+        - Movies
+      description: Delete the movie object
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses: 
+        "204":
+          description: Item successfully deleted
+          
+  /movies/{movieId}/actors:
+    get:
+      tags:
+        - Movies
+      summary: Get movie's actors by movie id
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Movie details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actors'
+        '404':
+          description: Not Found
+  
+  /actors:
+    get:
+      tags:
+        - Actors
+      summary: List all actors
+      description: Returns a list of actors with title and release date
+      parameters:
+        - name: name
+          in: query
+          description: filter by name
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+      responses: 
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  
+        '400':
+          description: Invalid name value
+    
+    post:
+      tags:
+        - Actors
+      summary: Create a new actor
+      requestBody:
+        description: Created actor object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actors'
+      responses:
+        '201':
+          description: Actor created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actors'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      
+  
+  /actors/{actorId}:
+    get:
+      tags:
+        - Actors
+      summary: Get an Actor object
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema: 
+            type: string
+            example: 1
+      responses: 
+        '200':
+          description: Item has found successfully
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    name:
+                      type: string
+                      example: Keanu Reeves
+                    height:
+                      type: integer
+                      format: int64
+                      example: 180
+    
+    put: 
+      tags:
+        - Actors
+      summary: Update an actor object
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Actors'
+      responses: 
+        200:
+          description: Item is successfully updated
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actors'
+        400:
+          description: Invalid input
+    
+    delete:
+      tags:
+        - Actors
+      description: Delete the actor object
+      parameters:
+        - in: path
+          name: actorIdId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Item successfully deleted
+          
+  /actors/{actorId}/movies:
+    get:
+      tags:
+        - Actors
+      summary: Get actor's movies by actor id
+      parameters:
+        - in: path
+          name: actorIdId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Actor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actors'
+        '404':
+          description: Not Found
+      
+                
+
+
+
+
+
+
+
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: The Matrix
+        genres:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            anyOf:
+              - type: string
+        plot:
+          type: string
+          example: Summaries...
+        release-date: 
+          type: string
+          format: date-time
+          example: 1999-03-24
+        authors: 
+          type: array
+          xml:
+            name: Actors
+            wrapped: true
+          items: 
+            $ref: '#/components/schemas/Actors'  
+          
+    Actors:
+      type: object
+      properties: 
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name: 
+          type: string
+          example: Keanu Reeves
+        born-date:
+          type: string
+          format: date
+          example: 1964-09-02
+        born-location:
+          type: string
+          example: Lebanon
+        height: 
+          type: integer
+          format: int64
+          example: 180
+        movies: 
+          type: array
+          xml:
+            name: Movies
+            wrapped: true
+          items: 
+            $ref: '#/components/schemas/Movie'
+          example: [The Matrix, John Wick]
+          

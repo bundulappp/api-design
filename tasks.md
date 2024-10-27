@@ -5,7 +5,8 @@ Use the [api.md](./api.md) to document your solution.
 ## Use case
 
 - We to create an API for a movie database.
-- We want to store the movie's title, genres, plot, release date and of course the actors.
+- We want to store the movie's title, genres, 
+plot, release date and of course the actors.
 - In our api we want to list the actors for the given movie.
 - We want to list a specific actor's movies too.
 - The information we want to store for an actor: name, the born date, the born location and their height.
